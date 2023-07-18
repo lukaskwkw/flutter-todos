@@ -1,15 +1,19 @@
 class TodoModel {
-  int id;
+  late int id;
   String title;
-  String description;
-  bool isDone;
+  late String description;
+  late bool isDone;
 
   TodoModel({
-    required this.id,
+    id,
     required this.title,
-    required this.description,
-    required this.isDone,
-  });
+    description,
+    isDone,
+  }) {
+    this.id = id ?? DateTime.now().millisecondsSinceEpoch;
+    this.description = description ?? "";
+    this.isDone = isDone ?? false;
+  }
 
   factory TodoModel.fromJson(Map<String, dynamic> json) => TodoModel(
         id: json['id'],

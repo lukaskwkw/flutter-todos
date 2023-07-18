@@ -3,20 +3,22 @@
 // Path: lib\src\screens\home\home.dart
 
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:provider/provider.dart';
 import 'package:todos/src/models/todo_list.dart';
 import 'package:todos/src/providers/todo_list_provider.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends HookWidget {
   const HomeScreen({Key? key}) : super(key: key);
 
   static const String routeName = '/';
 
   @override
   Widget build(BuildContext context) {
-    TodoListProvider todoListProvider = context.watch<TodoListProvider>();
-
-    todoListProvider.loadTodoLists();
+    TodoListProvider todoListProvider = Provider.of<TodoListProvider>(context);
+    useEffect(() {
+      todoListProvider.loadTodoLists();
+    }, []);
 
     return Scaffold(
       appBar: AppBar(
@@ -30,7 +32,7 @@ class HomeScreen extends StatelessWidget {
             title: Text(todoList.name),
             subtitle: Text('${todoList.todos.length} todos'),
             onTap: () {
-              Navigator.pushNamed(context, '/todo', arguments: todoList);
+              Navigator.pushNamed(context, '/todo', arguments: todoList.todos);
             },
           );
         },

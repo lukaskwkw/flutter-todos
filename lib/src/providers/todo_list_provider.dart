@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:todos/src/models/todo_list.dart';
+import 'package:todos/src/models/todo_model.dart';
 import 'package:todos/src/providers/shared_preferences_provider.dart';
 import 'package:fpdart/fpdart.dart';
 
@@ -46,6 +47,17 @@ class TodoListProvider with ChangeNotifier {
     final int index =
         todoLists.indexWhere((TodoList item) => item.name == todoList.name);
     todoLists[index] = todoList;
+    await saveTodoLists();
+
+    notifyListeners();
+  }
+
+  // push TodoModel to TodoList
+  Future<void> pushTodoModelToTodoList(
+      TodoList todoList, TodoModel todoModel) async {
+    final int index =
+        todoLists.indexWhere((TodoList item) => item.name == todoList.name);
+    todoLists[index].todos.add(todoModel);
     await saveTodoLists();
 
     notifyListeners();
