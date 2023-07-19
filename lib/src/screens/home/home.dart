@@ -1,12 +1,10 @@
-// HomeScreen class
-
-// Path: lib\src\screens\home\home.dart
-
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:todos/src/models/todo_list.dart';
 import 'package:todos/src/providers/todo_list_provider.dart';
+import 'package:todos/src/routes.dart';
 
 class HomeScreen extends HookWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -16,9 +14,6 @@ class HomeScreen extends HookWidget {
   @override
   Widget build(BuildContext context) {
     TodoListProvider todoListProvider = Provider.of<TodoListProvider>(context);
-    useEffect(() {
-      todoListProvider.loadTodoLists();
-    }, []);
 
     return Scaffold(
       appBar: AppBar(
@@ -30,9 +25,11 @@ class HomeScreen extends HookWidget {
           final TodoList todoList = todoListProvider.todoLists[index];
           return ListTile(
             title: Text(todoList.name),
-            subtitle: Text('${todoList.todos.length} todos'),
+            // subtitle: Text('${todoList.todos.length} todos'),
             onTap: () {
-              Navigator.pushNamed(context, '/todo', arguments: todoList.todos);
+              GoRouter.of(context).go(
+                '${Routes.todos}/${todoList.id.toString()}',
+              );
             },
           );
         },

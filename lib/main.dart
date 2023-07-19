@@ -7,13 +7,14 @@ import 'package:provider/provider.dart';
 void main() async {
   SharedPreferencesProvider sharedProvider = SharedPreferencesProvider();
   await sharedProvider.init();
+  final todoListProvider = TodoListProvider(shared: sharedProvider);
+  await todoListProvider.init();
 
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider<TodoListProvider>(
-            create: (context) => TodoListProvider(shared: sharedProvider)),
-        // Provider(create: (context) => SomeOtherClass()),
+            create: (context) => todoListProvider),
       ],
       child: const MainApp(),
     ),
@@ -24,13 +25,12 @@ class MainApp extends StatelessWidget {
   const MainApp({super.key});
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
       title: 'Todo App',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      onGenerateRoute: MainRouter.generateRoute,
-      initialRoute: Routes.home,
+      routerConfig: MainRouter.router,
     );
   }
 }
