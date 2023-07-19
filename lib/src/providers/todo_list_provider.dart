@@ -6,9 +6,15 @@ import 'package:fpdart/fpdart.dart';
 
 class TodoListProvider with ChangeNotifier {
   List<TodoList> todoLists = [];
+  List<TodoModel> todos = [];
   SharedPreferencesProvider shared;
 
   TodoListProvider({required this.shared});
+
+  Future<void> init() async {
+    await loadTodoLists();
+    await loadTodos();
+  }
 
   // load TodoList from storage
   Future<void> loadTodoLists() async {
@@ -52,15 +58,51 @@ class TodoListProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  // push TodoModel to TodoList
-  Future<void> pushTodoModelToTodoList(
-      TodoList todoList, TodoModel todoModel) async {
-    final int index =
-        todoLists.indexWhere((TodoList item) => item.name == todoList.name);
-    todoLists[index].todos.add(todoModel);
-    await saveTodoLists();
+  // add TodoModel to todos
+  Future<void> addTodoModel(TodoModel todoModel) async {
+    todos.add(todoModel);
 
+    await saveTodos();
     notifyListeners();
+  }
+
+  Future<void> removeTodoModel(TodoModel todoModel) async {
+    todos.remove(todoModel);
+
+    await saveTodos();
+    notifyListeners();
+  }
+
+  Future<void> updateTodoModel(TodoModel todoModel) async {
+    final int index =
+        todos.indexWhere((TodoModel item) => item.id == todoModel.id);
+    todos[index] = todoModel;
+
+    await saveTodos();
+    notifyListeners();
+  }
+
+  Future<void> loadTodos() async {
+    final Either<String, List<dynamic>> result =
+        shared.getJson<List<dynamic>>('todos');
+
+    result
+        .andThen(() => result.fold((l) => left(l), (r) {
+              try {
+                final list = r.map((e) => TodoModel.fromJson(e)).toList();
+                return right(list);
+              } catch (e) {
+                return left(e.toString());
+              }
+            }))
+        .fold((e) => print(e), (r) => todos = r);
+  }
+
+  Future<void> saveTodos() async {
+    await shared
+        .saveJson<List<TodoModel>>('todos', todos)
+        .run()
+        .then((value) => value.fold((l) => {print(l)}, (r) => null));
   }
 
   // save TodoList to storage
@@ -69,5 +111,13 @@ class TodoListProvider with ChangeNotifier {
         .saveJson<List<TodoList>>('todoLists', todoLists)
         .run()
         .then((value) => value.fold((l) => {print(l)}, (r) => null));
+  }
+
+  TodoList getTodoList(String id) {
+    return todoLists.firstWhere((TodoList item) => item.id == id);
+  }
+
+  List<TodoModel> getTodoModels(String id) {
+    return todos.where((TodoModel item) => item.todoListId == id).toList();
   }
 }

@@ -1,8 +1,8 @@
-import 'package:todos/src/models/todo_model.dart';
+import 'package:flutter/material.dart';
+import 'package:uuid/uuid.dart';
 
 class TodoList {
-  // array of TodoModel
-  List<TodoModel> todos = [];
+  late String id;
   // date of creation
   DateTime createdAt = DateTime.now();
   // date of last update
@@ -18,26 +18,24 @@ class TodoList {
 
   TodoList({
     required this.name,
+    String? id,
     String? description,
-    List<TodoModel>? todos,
     DateTime? createdAt,
     DateTime? updatedAt,
     bool? showCompleted,
     bool? showNotCompleted,
   }) {
+    this.id = id ?? Uuid().v4();
     this.createdAt = createdAt ?? DateTime.now();
     this.updatedAt = updatedAt ?? DateTime.now();
     this.showCompleted = showCompleted ?? false;
     this.showNotCompleted = showNotCompleted ?? false;
-    this.todos = todos ?? [];
     this.description = description ?? "";
   }
 
   factory TodoList.fromJson(Map<String, dynamic> json) {
     final x = TodoList(
-      todos: (json['todos'] as List<dynamic>)
-          .map((e) => TodoModel.fromJson(e))
-          .toList(),
+      id: json['id'],
       createdAt: DateTime.parse(json['createdAt']),
       updatedAt: DateTime.parse(json['updatedAt']),
       name: json['name'],
@@ -49,7 +47,7 @@ class TodoList {
   }
 
   Map<String, dynamic> toJson() => {
-        'todos': todos,
+        'id': id,
         'createdAt': createdAt.toString(),
         'updatedAt': updatedAt.toString(),
         'name': name,

@@ -1,10 +1,18 @@
-part of "todo.dart";
+part of 'todos.dart';
 
-class AddTodoFloatingButton extends StatelessWidget {
-  late Function(TodoModel todo) onAddTodo;
+class AddTodoFloatingButton extends StatefulWidget {
+  final Function(TodoModel todo) onAddTodo;
+  final String todoListId;
 
-  AddTodoFloatingButton({Key? key, required this.onAddTodo}) : super(key: key);
+  const AddTodoFloatingButton(
+      {Key? key, required this.onAddTodo, required this.todoListId})
+      : super(key: key);
 
+  @override
+  State<AddTodoFloatingButton> createState() => _AddTodoFloatingButtonState();
+}
+
+class _AddTodoFloatingButtonState extends State<AddTodoFloatingButton> {
   @override
   Widget build(BuildContext context) {
     return FloatingActionButton(
@@ -32,10 +40,11 @@ class AddTodoFloatingButton extends StatelessWidget {
                   child: const Text('Add'),
                   onPressed: () async {
                     final TodoModel newTodo = TodoModel(
+                      todoListId: widget.todoListId,
                       title: controller.text,
                       isDone: false,
                     );
-                    onAddTodo(newTodo);
+                    widget.onAddTodo(newTodo);
 
                     Navigator.pop(context);
                   },
