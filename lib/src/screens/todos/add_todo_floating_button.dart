@@ -27,8 +27,9 @@ class _AddTodoFloatingButtonState extends State<AddTodoFloatingButton> {
             return AlertDialog(
               title: const Text('Add Todo'),
               content: TextField(
-                controller: controller,
-              ),
+                  controller: controller,
+                  autofocus: true,
+                  onSubmitted: (value) => onSubmit(controller, context)),
               actions: <Widget>[
                 TextButton(
                   child: const Text('Cancel'),
@@ -39,14 +40,7 @@ class _AddTodoFloatingButtonState extends State<AddTodoFloatingButton> {
                 TextButton(
                   child: const Text('Add'),
                   onPressed: () async {
-                    final TodoModel newTodo = TodoModel(
-                      todoListId: widget.todoListId,
-                      title: controller.text,
-                      isDone: false,
-                    );
-                    widget.onAddTodo(newTodo);
-
-                    Navigator.pop(context);
+                    onSubmit(controller, context);
                   },
                 ),
               ],
@@ -55,5 +49,16 @@ class _AddTodoFloatingButtonState extends State<AddTodoFloatingButton> {
         );
       },
     );
+  }
+
+  void onSubmit(TextEditingController controller, BuildContext context) {
+    final TodoModel newTodo = TodoModel(
+      todoListId: widget.todoListId,
+      title: controller.text,
+      isDone: false,
+    );
+    widget.onAddTodo(newTodo);
+
+    Navigator.pop(context);
   }
 }

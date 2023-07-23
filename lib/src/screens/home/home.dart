@@ -46,7 +46,11 @@ class HomeScreen extends HookWidget {
               return AlertDialog(
                 title: const Text('Add Todo List'),
                 content: TextField(
+                  autofocus: true,
                   controller: controller,
+                  onSubmitted: (_) async {
+                    await onSubmit(controller, todoListProvider, context);
+                  },
                 ),
                 actions: <Widget>[
                   TextButton(
@@ -58,16 +62,7 @@ class HomeScreen extends HookWidget {
                   TextButton(
                     child: const Text('Add'),
                     onPressed: () async {
-                      // log hello world
-                      print('hello world');
-                      // create a new TodoList
-                      final TodoList todoList = TodoList(
-                        name: controller.text,
-                      );
-                      // add the TodoList to the list
-                      await todoListProvider.addTodoList(todoList);
-                      // close the dialog
-                      Navigator.pop(context);
+                      await onSubmit(controller, todoListProvider, context);
                     },
                   ),
                 ],
@@ -77,5 +72,14 @@ class HomeScreen extends HookWidget {
         },
       ),
     );
+  }
+
+  Future<void> onSubmit(TextEditingController controller,
+      TodoListProvider todoListProvider, BuildContext context) async {
+    final TodoList todoList = TodoList(
+      name: controller.text,
+    );
+    await todoListProvider.addTodoList(todoList);
+    Navigator.pop(context);
   }
 }
