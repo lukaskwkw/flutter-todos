@@ -16,7 +16,9 @@ class _AddTodoFloatingButtonState extends State<AddTodoFloatingButton> {
   @override
   Widget build(BuildContext context) {
     return FloatingActionButton(
+      heroTag: "addTodo_btn",
       child: const Icon(Icons.add),
+      autofocus: true,
       onPressed: () {
         // show a dialog to add a new Todo
         showDialog<AlertDialog>(
